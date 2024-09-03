@@ -60,28 +60,28 @@ def resize_image(img_pil, resolution):
     return img_pil.resize((width, height), Image.LANCZOS)  # 使用 LANCZOS 替换 ANTIALIAS
 
 
+import numpy as np
+
 def is_grayscale_image(img_pil):
-    # 将图像转换为 NumPy 数组
-    img_array = np.array(img_pil)
+    # 将图像转换为灰度图像数组
+    img_array = np.array(img_pil.convert("L"))
     
     # 获取图像的总像素数
-    total_pixels = img_array.shape[0] * img_array.shape[1]
+    total_pixels = img_array.size
     
-    # 判断黑色和白色的像素数
-    if img_pil.mode == "RGB":
-        black_pixels = np.sum(np.all(img_array == [0, 0, 0], axis=-1))
-        white_pixels = np.sum(np.all(img_array == [255, 255, 255], axis=-1))
-    elif img_pil.mode == "L":
-        black_pixels = np.sum(img_array == 0)
-        white_pixels = np.sum(img_array == 255)
-    else:
-        return False
+    # 定义黑色和白色的阈值范围
+    black_threshold = 20  # 黑色像素的最大值
+    white_threshold = 200  # 白色像素的最小值
+    
+    # 统计黑色和白色像素的数量
+    black_pixels = np.sum(img_array <= black_threshold)
+    white_pixels = np.sum(img_array >= white_threshold)
     
     # 计算黑色和白色像素的比例
     black_ratio = black_pixels / total_pixels
     white_ratio = white_pixels / total_pixels
     
-    # 如果黑色或白色像素超过30%，则认为是需要跳过颜色处理的图像
+    # 如果黑色或白色像素比例超过 20%，则认为是需要跳过颜色处理的图像
     if black_ratio > 0.3 or white_ratio > 0.3:
         print(f"黑色比例: {black_ratio:.2f}, 白色比例: {white_ratio:.2f} - 跳过颜色处理")
         return True
@@ -149,5 +149,5 @@ if __name__ == "__main__":
     flask_thread.start()
 
     # 创建Webview窗口，设置自定义大小
-    webview.create_window("Image Uploader", "web/index.html", width=1000, height=800)
+    webview.create_window("Image Uploader", "http://localhost:5173/", width=1000, height=800)
     webview.start()

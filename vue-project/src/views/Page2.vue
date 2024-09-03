@@ -1,12 +1,18 @@
 <template>
   <div class="page2">
-    <!-- 使用 ImageUploader 组件 -->
     <ImageUploader @file-selected="uploadImage" />
 
-    <!-- 如果 grayscaleImage 有值，则显示处理后的灰度图 -->
     <div v-if="grayscaleImage" class="image-preview">
       <p class="image-preview-title">处理后:</p>
-      <img :src="grayscaleImage" alt="Grayscale Image" />
+      <!-- 点击图片时，显示在弹出窗口中 -->
+      <img :src="grayscaleImage" alt="Grayscale Image" @click="openImageModal" />
+    </div>
+
+    <!-- 弹出窗口 -->
+    <div v-if="showModal" class="modal" @click="closeImageModal">
+      <div class="modal-content">
+        <img :src="grayscaleImage" alt="Grayscale Image" />
+      </div>
     </div>
   </div>
 </template>
@@ -15,9 +21,22 @@
 import { ref } from "vue";
 import ImageUploader from '../components/ImageUploader.vue';
 
-const grayscaleImage = ref(null);
+const props = defineProps({
+  grayscaleImage: String,
+  updateImage: Function,
+});
 
-// 上传图片到后端并处理返回结果
+const grayscaleImage = ref(props.grayscaleImage);
+const showModal = ref(false);
+
+const openImageModal = () => {
+  showModal.value = true;
+};
+
+const closeImageModal = () => {
+  showModal.value = false;
+};
+
 const uploadImage = async (file) => {
   try {
     const formData = new FormData();
@@ -32,6 +51,7 @@ const uploadImage = async (file) => {
       const blob = await response.blob();
       const imageUrl = URL.createObjectURL(blob);
       grayscaleImage.value = imageUrl;
+      props.updateImage(imageUrl);
     } else {
       console.error("Upload failed");
     }
@@ -54,16 +74,37 @@ const uploadImage = async (file) => {
   max-height: 400px;
   border: 1px solid #ccc;
   margin-top: 20px;
-}
-
-.clickable {
-  text-decoration: underline; /* 添加下划线 */
-  color: rgb(41, 172, 73);
+  cursor: pointer;
 }
 
 .image-preview-title {
-  color: rgb(48, 52, 64);
+
+  color: #626F7B;
   font-size: 20px;
   font-weight: bold;
+}
+
+/* Modal 样式 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.modal-content img {
+  width: 100%;
+  height: auto;
+  border: 5px solid #fff;
 }
 </style>

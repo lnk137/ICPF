@@ -6,7 +6,7 @@
       @drop.prevent="handleDrop"
       @click="triggerFileInput"
     >
-      <p>将图片拖拽到此处或者 <em class="clickable">点击上传</em></p>
+      <p style="color: #626F7B;font-weight: 600;">将图片拖拽到此处或者 <em class="clickable">点击上传</em></p>
       <input
         type="file"
         ref="fileInput"

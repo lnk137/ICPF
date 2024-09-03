@@ -131,6 +131,7 @@ const handleClick = async () => {
   color: #303440;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .HSV-container {

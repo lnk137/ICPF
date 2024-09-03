@@ -8,7 +8,7 @@
 
     <div class="content">
       <!-- 使用 RouterView 传递全局图片状态 -->
-      <RouterView :grayscaleImage="grayscaleImage" @update-image="updateImage" />
+      <RouterView :grayscaleImage="grayscaleImage" :updateImage="updateImage" />
     </div>
   </div>
 </template>
@@ -30,6 +30,7 @@ const updateImage = (newImage: string) => {
 @max: 100%;
 
 .clash-wrapper {
+  background-color: #c4d6d0;
   display: flex;
   height: @max;
   width: @max;
@@ -40,6 +41,7 @@ const updateImage = (newImage: string) => {
     justify-content: flex-start;
     width: 30vh;
     background: linear-gradient(#26A484, #26a4a4);
+    border-radius: 7px;
   }
 
   .nav-link {
@@ -54,25 +56,25 @@ const updateImage = (newImage: string) => {
     border-radius: 5px;
     justify-content: center;
     flex-direction: column;
-    transition: background-color 0.3s, opacity 0.3s;
+    transition: background-color 0.3s, opacity 0.3s ,color 0.3s;
   }
 
   .nav-link:hover {
     opacity: 1;
     background-color: rgba(255, 255, 255, 0.251);
+    border-radius: 20px;
     /* 添加hover效果 */
   }
 
   .nav-link:focus {
     background-color: rgba(198, 198, 198, 0.201);
     /* 添加按下时的背景色 */
-    color: rgb(216, 220, 231);
+    color: rgb(194, 212, 222);
     /* 改变文字颜色以提高可读性 */
   }
 
   .content {
     flex-grow: 1;
-    background-color: #c4d6d0;
     padding: 20px;
   }
 }
