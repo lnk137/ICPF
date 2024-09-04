@@ -34,6 +34,7 @@ const updateImage = (newImage: string) => {
   display: flex;
   height: @max;
   width: @max;
+  
 
   .sidebar {
     display: flex;

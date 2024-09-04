@@ -7,8 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ElIcon: typeof import('element-plus/es')['ElIcon']
-    ElUpload: typeof import('element-plus/es')['ElUpload']
     ImageUploader: typeof import('./src/components/ImageUploader.vue')['default']
     RippleButton: typeof import('./src/components/RippleButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

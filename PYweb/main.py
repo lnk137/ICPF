@@ -6,7 +6,7 @@ import threading
 import numpy as np
 import cv2
 from flask_cors import CORS
-
+#pyinstaller main.spec
 app = Flask(__name__)
 CORS(app)
 
@@ -149,5 +149,6 @@ if __name__ == "__main__":
     flask_thread.start()
 
     # 创建Webview窗口，设置自定义大小
-    webview.create_window("Image Uploader", "http://localhost:5173/", width=1000, height=800)
+    #http://localhost:5173/
+    webview.create_window("Image Uploader", "web/index.html", width=1000, height=800, resizable=False)
     webview.start()

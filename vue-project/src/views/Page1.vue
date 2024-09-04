@@ -44,13 +44,17 @@
         <input v-model="startHeight" type="number" min="0" max="20000" class="custom-input" />
       </div>
     </div>
+    <div>
+      <img :src="tree" alt="树木" class="image" />
+    </div>
   </div>
 </template>
 
 <script setup>
+import tree from '@/assets/树木.png'; // 通过import导入图片
 import { ref, onMounted, onUnmounted } from 'vue';
 // @ts-ignore
-import RippleButton from '@/components/RippleButton.vue';
+
 
 // 定义数据
 const lowerHue = ref(35);
@@ -132,6 +136,7 @@ const handleClick = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .HSV-container {
@@ -221,5 +226,13 @@ label {
   display: flex;
   flex-direction: column;
   align-items: flex-start
+}
+.image{
+  max-width: 700px;
+  position: absolute; /* 将图片绝对定位 */
+  bottom: 0; /* 固定到页面底部 */
+  left: 250px;
+  right: 0;
+  opacity: 0.9; /* 如果需要，可以添加透明度效果 */
 }
 </style>
