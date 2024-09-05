@@ -16,7 +16,7 @@ upper_range_hsv = [255, 255, 255]
 resolution = "500x500"
 soil_width = 500
 start_height = 0
-
+# 获得前端的参数
 @app.route("/color-ranges", methods=["POST"])
 def get_data():
     global lower_range_hsv, upper_range_hsv, resolution, soil_width, start_height
@@ -43,17 +43,9 @@ def get_data():
         "soil_width": soil_width,
         "start_height": start_height,
     })
-    
-def calculate_black_area_ratio(img_pil):
-    img = np.array(img_pil.convert("L"))  # 转换为灰度图像数组
-    total_pixels = img.size
-    black_pixels = np.sum(img <= 150)  # 计算黑色像素数量
-    black_ratio = black_pixels / total_pixels  # 计算黑色像素比例
-    print(f"黑色像素比例{black_ratio},{total_pixels}个像素,{black_pixels}个黑色像素")
-    height, width = img.shape
-    black_area = black_ratio * height * width * 0.01  # 计算黑色区域面积
-    return black_area, black_ratio
 
+
+# 获取分辨率
 def parse_resolution(resolution_str):
     # 解析分辨率字符串并返回宽度和高度
     if resolution_str:
@@ -64,14 +56,14 @@ def parse_resolution(resolution_str):
             print("解析分辨率失败，使用默认500x500")
     return 500, 500  # 默认分辨率
 
+# 调整图像分辨率
 def resize_image(img_pil, resolution):
-    # 调整图像分辨率
+   
     width, height = parse_resolution(resolution)
     return img_pil.resize((width, height), Image.LANCZOS)  # 使用 LANCZOS 替换 ANTIALIAS
 
 
-import numpy as np
-
+# 判断图像是否是灰度图
 def is_grayscale_image(img_pil):
     # 将图像转换为灰度图像数组
     img_array = np.array(img_pil.convert("L"))
@@ -97,6 +89,19 @@ def is_grayscale_image(img_pil):
         return True
     
     return False
+
+# 计算染色区域面积和染色比例
+def calculate_black_area_ratio(img_pil):
+    img = np.array(img_pil.convert("L"))  # 转换为灰度图像数组
+    total_pixels = img.size
+    black_pixels = np.sum(img <= 150)  # 计算黑色像素数量
+    black_ratio = black_pixels / total_pixels  # 计算黑色像素比例
+    print(f"黑色像素比例{black_ratio},{total_pixels}个像素,{black_pixels}个黑色像素")
+    height, width = img.shape
+    black_area = black_ratio * height * width * 0.01  # 计算黑色区域面积
+    return black_area, black_ratio
+ 
+# 黑白颜色处理函数
 def black_white_processing(img_pil,resolution):
     # 处理图像，先调整分辨率再进行颜色操作
     img_resized = resize_image(img_pil, resolution)  # 调整分辨率
@@ -117,8 +122,9 @@ def black_white_processing(img_pil,resolution):
     img_pil=Image.fromarray(mask_rgb)  
     return img_pil
 
+#图像处理主函数
 def process_image(img_pil, lower_range, upper_range, resolution):
-    global final_img, S_Black, y_coordinate, black_ratio
+    global final_img, black_area, y_coordinate, black_ratio
     # 如果图像不是灰度图，则进入颜色处理
     if not is_grayscale_image(img_pil):
         print("是原图，进入颜色处理")
@@ -126,8 +132,12 @@ def process_image(img_pil, lower_range, upper_range, resolution):
     else:
         img_pil = resize_image(img_pil, resolution)  # 调整分辨率
         print("是黑白图，取消颜色处理")
-    S_Black, black_ratio = calculate_black_area_ratio(img_pil)
-    print(f"黑色区域面积: {S_Black:.2f}, 黑色像素比例: {black_ratio:.2f}")
+    black_area, black_ratio = calculate_black_area_ratio(img_pil)
+    # 保留两位小数
+    black_area = round(black_area, 2)
+    black_ratio = round(black_ratio, 2)
+
+    print(f"黑色区域面积: {black_area}, 黑色像素比例: {black_ratio}")
     return img_pil
 
 @app.route("/upload", methods=["POST"])
@@ -152,6 +162,13 @@ def upload_image():
     # 将图像作为响应返回
     return send_file(img_io, mimetype="image/png")
 
+@app.route("/show-data", methods=["GET"])
+def show_data():
+    # 返回已经处理好的 black_area 和 black_ratio
+    return jsonify({
+        "black_area": black_area,  # 已处理好的黑色区域面积
+        "black_ratio": black_ratio  # 已处理好的黑色像素比例
+    })
 
 def start_flask():
     app.run(port=5000)
@@ -164,5 +181,6 @@ if __name__ == "__main__":
 
     # 创建Webview窗口，设置自定义大小
     #http://localhost:5173/
-    webview.create_window("Image Uploader", "web/index.html", width=1000, height=800, resizable=False)
+    # web/index.html
+    webview.create_window("Image Uploader", "http://localhost:5173/", width=1000, height=800, resizable=False)
     webview.start()

@@ -1,47 +1,109 @@
 <template>
   <div class="body">
-    <!-- HSV范围 -->
-    <div class="HSV-container">
-      <div class="input-group">
-        <label>H值下限</label>
-        <input v-model="lowerHue" type="number" min="0" max="255" class="custom-input" />
+    <div class="argument">
+      <!-- HSV范围 -->
+      <div class="HSV-container">
+        <div class="input-group">
+          <label>H值下限</label>
+          <input
+            v-model="lowerHue"
+            type="number"
+            min="0"
+            max="255"
+            class="custom-input"
+          />
+        </div>
+        <div class="input-group">
+          <label>S值下限</label>
+          <input
+            v-model="lowerSaturation"
+            type="number"
+            min="0"
+            max="255"
+            class="custom-input"
+          />
+        </div>
+        <div class="input-group">
+          <label>V值下限</label>
+          <input
+            v-model="lowerValue"
+            type="number"
+            min="0"
+            max="255"
+            class="custom-input"
+          />
+        </div>
+        <div class="input-group">
+          <label>H值上限</label>
+          <input
+            v-model="upperHue"
+            type="number"
+            min="0"
+            max="255"
+            class="custom-input"
+          />
+        </div>
+        <div class="input-group">
+          <label>S值上限</label>
+          <input
+            v-model="upperSaturation"
+            type="number"
+            min="0"
+            max="255"
+            class="custom-input"
+          />
+        </div>
+        <div class="input-group">
+          <label>V值上限</label>
+          <input
+            v-model="upperValue"
+            type="number"
+            min="0"
+            max="255"
+            class="custom-input"
+          />
+        </div>
       </div>
-      <div class="input-group">
-        <label>S值下限</label>
-        <input v-model="lowerSaturation" type="number" min="0" max="255" class="custom-input" />
-      </div>
-      <div class="input-group">
-        <label>V值下限</label>
-        <input v-model="lowerValue" type="number" min="0" max="255" class="custom-input" />
-      </div>
-      <div class="input-group">
-        <label>H值上限</label>
-        <input v-model="upperHue" type="number" min="0" max="255" class="custom-input" />
-      </div>
-      <div class="input-group">
-        <label>S值上限</label>
-        <input v-model="upperSaturation" type="number" min="0" max="255" class="custom-input" />
-      </div>
-      <div class="input-group">
-        <label>V值上限</label>
-        <input v-model="upperValue" type="number" min="0" max="255" class="custom-input" />
-      </div>
-    </div>
-    <!-- 分辨率调整 -->
-    <div class="other">
-      <div class="resolution-container">
-        <label>分辨率大小</label>
-        <input v-model="resolutionWidth" type="number" min="1" max="2000" class="custom-input" />
-        <label>x</label>
-        <input v-model="resolutionHeight" type="number" min="1" max="2000" class="custom-input" />
-      </div>
-      <div class="soli-container">
-        <label>土壤剖面宽度</label>
-        <input v-model="soilWidth" type="number" min="1" max="1000" class="custom-input" />
-      </div>
-      <div class="start-height-container">
-        <label>起始高度</label>
-        <input v-model="startHeight" type="number" min="0" max="20000" class="custom-input" />
+      <!-- 分辨率调整 -->
+      <div class="other">
+        <div class="resolution-container">
+          <label>分辨率大小</label>
+          <input
+            v-model="resolutionWidth"
+            type="number"
+            min="1"
+            max="2000"
+            class="custom-input"
+          />
+          <label>x</label>
+          <input
+            v-model="resolutionHeight"
+            type="number"
+            min="1"
+            max="2000"
+            class="custom-input"
+          />
+        </div>
+        <div class="soli-container">
+          <label>土壤剖面宽度</label>
+          <input
+            v-model="soilWidth"
+            type="number"
+            min="1"
+            max="1000"
+            class="custom-input"
+          />
+        </div>
+        <div class="start-height-container">
+          <label>起始高度</label>
+          <input
+            v-model="startHeight"
+            type="number"
+            min="0"
+            max="20000"
+            class="custom-input"
+          />
+        </div>
       </div>
     </div>
     <div>
@@ -51,10 +113,9 @@
 </template>
 
 <script setup>
-import tree from '@/assets/树木.png'; // 通过import导入图片
-import { ref, onMounted, onUnmounted } from 'vue';
+import tree from "@/assets/树木.png"; // 通过import导入图片
+import { ref, onMounted, onUnmounted } from "vue";
 // @ts-ignore
-
 
 // 定义数据
 const lowerHue = ref(35);
@@ -76,7 +137,7 @@ const getColorRanges = () => {
     upper_range: [upperHue.value, upperSaturation.value, upperValue.value],
     resolution: `${resolutionWidth.value}x${resolutionHeight.value}`,
     soil_width: soilWidth.value,
-    start_height: startHeight.value
+    start_height: startHeight.value,
   };
 };
 
@@ -85,22 +146,22 @@ const sendColorRanges = async () => {
   const data = getColorRanges();
 
   try {
-    const response = await fetch('http://localhost:5000/color-ranges', {
-      method: 'POST',
+    const response = await fetch("http://localhost:5000/color-ranges", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to send color ranges');
+      throw new Error("Failed to send color ranges");
     }
 
     const result = await response.json();
-    console.log('Data sent successfully:', result);
+    console.log("Data sent successfully:", result);
   } catch (error) {
-    console.error('An error occurred:', error);
+    console.error("An error occurred:", error);
   }
 };
 
@@ -119,9 +180,9 @@ onUnmounted(() => {
 const handleClick = async () => {
   try {
     await sendColorRanges();
-    alert('Color ranges sent successfully!');
+    alert("Color ranges sent successfully!");
   } catch (error) {
-    alert('Failed to send color ranges.');
+    alert("Failed to send color ranges.");
     console.error(error);
   }
 };
@@ -134,9 +195,16 @@ const handleClick = async () => {
   font-size: 20px;
   color: #303440;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   flex-wrap: wrap;
+  .argument{
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 40px 0;
+  }
 }
 
 .HSV-container {
@@ -202,7 +270,6 @@ label {
   }
 }
 
-
 .soli-container {
   display: flex;
   align-items: center;
@@ -222,12 +289,12 @@ label {
     margin: 0 10px;
   }
 }
-.other{
+.other {
   display: flex;
   flex-direction: column;
-  align-items: flex-start
+  align-items: flex-start;
 }
-.image{
+.image {
   max-width: 700px;
   position: absolute; /* 将图片绝对定位 */
   bottom: 0; /* 固定到页面底部 */

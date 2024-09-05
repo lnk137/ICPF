@@ -1,9 +1,10 @@
 <template>
-  <div class="clash-wrapper">
+  <div class="body">
     <div class="sidebar">
       <router-link to="/page1" class="nav-link">参数调整</router-link>
       <router-link to="/page2" class="nav-link">导入图片</router-link>
       <router-link to="/page3" class="nav-link">结果查看</router-link>
+      <router-link to="/test" class="nav-link">测试页面</router-link>
     </div>
 
     <div class="content">
@@ -29,7 +30,7 @@ const updateImage = (newImage: string) => {
 <style scoped lang="less">
 @max: 100%;
 
-.clash-wrapper {
+.body {
   background-color: #c4d6d0;
   display: flex;
   height: @max;
@@ -43,6 +44,7 @@ const updateImage = (newImage: string) => {
     width: 30vh;
     background: linear-gradient(#26A484, #26a4a4);
     border-radius: 7px;
+    flex: 0 0 auto; /* 防止侧边栏被压缩 */
   }
 
   .nav-link {

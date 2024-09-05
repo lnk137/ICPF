@@ -1,30 +1,59 @@
 <template>
   <div class="show">
-    <div class="title">这个页面，你只会见到一次</div>
-    <div class="title">哈   哈   哈   哈</div>
-    <div class="title">因为这只是个欢迎页面</div>
-    <div class="title">你不可能在这里停留太久，并且再也回不到这里</div>
-    <div>
-        <img :src="imageSrc" alt="想" class="image" />
+    <div class="title">点击图片也没用</div>
+    <div class="img-container">
+      <img :src="imageSrc" alt="你是不是没联网" class="image" @click="handleClick" />
     </div>
+
   </div>
 </template>
 
 <script setup>
-import imageSrc from '@/assets/芙莉莲旷工.jpg'; // 通过import导入图片
+import imageSrc from "@/assets/芙莉莲睡觉.png"; // 通过import导入图片
+
+// 跳转的处理函数
+const handleClick = () => {
+  window.location.href = 'https://snake.org.cn'; // 跳转到指定链接
+};
+
 </script>
 
 <style scoped lang="less">
 .show {
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 .title {
-    font-size: 45px;
-    font-weight: bold;
-    color:#303440;
+  font-size: 45px;
+  font-weight: bold;
+  color: #303440;
 }
-.image{
-    max-height: 350px;
+.img-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.image {
+  max-height: 350px;
+  cursor: pointer;
+}
+
+.back-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: #45a049;
 }
 </style>
