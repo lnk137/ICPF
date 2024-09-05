@@ -5,7 +5,7 @@
       <WifiLoader text="加载中..." />
     </div>
     <div v-else class="result">
-      <CardComponent :percentage="blackRatio*100" title="染色面积比" label="" />
+      <CardComponent :percentage="blackRatio" title="染色面积比" label="" />
       <SimpleCard :title="`${blackArea} cm²`" subtitle="染色面积" />
 
     </div>
