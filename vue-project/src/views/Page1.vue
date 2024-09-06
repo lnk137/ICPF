@@ -169,7 +169,7 @@ const sendColorRanges = async () => {
 let intervalId;
 
 onMounted(() => {
-  intervalId = setInterval(sendColorRanges, 100000); // 每5秒发送一次数据
+  intervalId = setInterval(sendColorRanges, 500); // 每5秒发送一次数据
 });
 
 onUnmounted(() => {

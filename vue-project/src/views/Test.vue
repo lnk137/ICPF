@@ -5,7 +5,7 @@
       <div class="title">休息一下，听会儿歌吧</div>
       <audio controls>
         <source
-          src="https://api.liumingye.cn/m/api/link?id=d3f636iePH3nJMVUD1wXmSGHhLLowuO8zTtj3D5jYckALink&quality=128&_t=1725619294109&token=20240531.00ca1f7f6c6b649a7ed8f7c6c16d7383"
+          src="http://music.163.com/song/media/outer/url?id=285005.mp3"
           type="audio/mpeg"
         />
       </audio>

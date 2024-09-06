@@ -1,6 +1,6 @@
 import io
 from flask import Flask, request, jsonify, send_file
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageDraw
 import webview
 import threading
 import numpy as np
@@ -91,6 +91,30 @@ def is_grayscale_image(img_pil):
         return True
     
     return False
+
+# 在图像上绘制红线
+def draw_red_line(display_img, matrix_flow_depth):
+    draw = ImageDraw.Draw(display_img)
+    width, height = display_img.size
+    line_thickness = int(height * 0.005)  # 计算线条厚度
+    draw.line([(0, matrix_flow_depth), (width, matrix_flow_depth)], fill="#a60d0d", width=line_thickness)  # 绘制红线
+    return display_img
+
+# 在图像上绘制蓝线
+def draw_blue_line(img_pil, start_height):
+    draw = ImageDraw.Draw(img_pil)
+    width, height = img_pil.size
+    line_thickness = int(height * 0.003)  # 计算线条厚度
+    draw.line([(0, start_height), (width, start_height)], fill="#00acd6", width=line_thickness)  # 绘制蓝线
+    return img_pil
+
+# 在图像上绘制绿线
+def draw_green_line(img_pil, maximum_staining_depth):
+    draw = ImageDraw.Draw(img_pil)
+    width, height = img_pil.size
+    line_thickness = int(height * 0.003)  # 计算线条厚度
+    draw.line([(0, maximum_staining_depth), (width, maximum_staining_depth)], fill="#12822a", width=line_thickness)  # 绘制绿线
+    return img_pil
 
 # 计算染色区域面积和染色比例
 def calculate_black_area_ratio(img_pil):
@@ -235,6 +259,7 @@ def process_image(img_pil, lower_range, upper_range, resolution):
         print("是黑白图，取消颜色处理")
     # 计算各种参数
     calculate_parameters(img_pil)
+    
     return img_pil
 
 @app.route("/upload", methods=["POST"])
@@ -250,10 +275,13 @@ def upload_image():
 
     # 调用处理函数处理图像
     processed_img = process_image(img, lower_range_hsv, upper_range_hsv, resolution)
-
+    display_img = processed_img.copy()
+    display_img=draw_red_line(display_img, matrix_flow_depth*10)  # 绘制基质流深度的红线
+    display_img=draw_blue_line(display_img, start_height)  # 绘制基质流深度的红线
+    display_img=draw_green_line(display_img, maximum_staining_depth*10)  # 绘制基质流深度的红线
     # 将处理后的图像保存到字节流中
     img_io = io.BytesIO()
-    processed_img.save(img_io, "PNG")
+    display_img.save(img_io, "PNG")
     img_io.seek(0)
 
     # 将图像作为响应返回
