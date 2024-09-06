@@ -1,6 +1,7 @@
 <template>
   <div class="show">
-    <div class="title">点击图片也没用</div>
+    <div class="title">什么？又有新彩蛋？</div>
+    <div>点击后要稍等一会</div>
     <div class="img-container">
       <img :src="imageSrc" alt="你是不是没联网" class="image" @click="handleClick" />
     </div>
@@ -9,11 +10,11 @@
 </template>
 
 <script setup>
-import imageSrc from "@/assets/芙莉莲睡觉.png"; // 通过import导入图片
+import imageSrc from "@/assets/冬天.png"; // 通过import导入图片
 
 // 跳转的处理函数
 const handleClick = () => {
-  window.location.href = 'https://snake.org.cn'; // 跳转到指定链接
+  window.location.href = 'https://bruno-simon.com/'; // 跳转到指定链接
 };
 
 </script>

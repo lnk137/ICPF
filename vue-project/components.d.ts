@@ -7,12 +7,16 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AudioPlayer: typeof import('./src/components/音乐/audioPlayer.vue')['default']
     CardComponent: typeof import('./src/components/CardComponent.vue')['default']
+    CardGroup: typeof import('./src/components/三百分比卡片/CardGroup.vue')['default']
     ImageUploader: typeof import('./src/components/ImageUploader.vue')['default']
+    PercentageGroup: typeof import('./src/components/PercentageGroup.vue')['default']
     RippleButton: typeof import('./src/components/RippleButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SimpleCard: typeof import('./src/components/SimpleCard.vue')['default']
+    Temp: typeof import('./src/components/三百分比卡片/temp.vue')['default']
     WifiLoader: typeof import('./src/components/WifiLoader.vue')['default']
   }
 }

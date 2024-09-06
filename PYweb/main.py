@@ -16,6 +16,8 @@ upper_range_hsv = [255, 255, 255]
 resolution = "500x500"
 soil_width = 50
 start_height = 0
+
+
 # 获得前端的参数
 @app.route("/color-ranges", methods=["POST"])
 def get_data():
@@ -102,6 +104,7 @@ def calculate_black_area_ratio(img_pil):
     black_ratio= f"{black_ratio*100:.2f}"
     print(f"@@@来自calculate_black_area_ratio@@@")
     print(f"黑色区域面积: {black_area}, 黑色像素比例: {black_ratio}%")
+    black_area, black_ratio=float(black_area),float(black_ratio)
     return black_area, black_ratio
 
 
@@ -122,10 +125,12 @@ def find_y_coordinate(img_pil, target_ratio=0.8):
     
 # 计算优先流百分数
 def calculate_priority_flow_percentage(soil_width, matrix_flow_depth, black_area):
-    a = float(soil_width) * float(matrix_flow_depth)/10  # 计算a值
+    a = float(soil_width) * float(matrix_flow_depth)  # 计算a值
     b = float(black_area)  # 获取染色面积并转换为浮点数
+    print(f"a值: {a}, b值: {b}")
     result = f"{(1 - a / b) * 100:.2f}"  # 计算优先流百分数
     print("@@@来自calculate_priority_flow_percentage@@@")
+    result=float(result)
     print(f"优先流百分数{result}%")
     return result
 
@@ -134,8 +139,10 @@ def calculate_area_ratio_of_preferred_flow_zone(soil_width, matrix_flow_depth, b
     a=float(black_area)-matrix_flow_depth*soil_width
     soil_area = soil_width * soil_width 
     result = (a/soil_area)*100
+    result=f"{result:.2f}"
     print("@@@来自calculate_area_ratio_of_preferred_flow_zone@@@")
     print(f"优先流区染色面积比: {result} %")
+    result=float(result)
     return result
 
 #计算最大染色深度
@@ -156,8 +163,10 @@ def calculate_maximum_staining_depth (img_pil, target_ratio=0.005):
                 y/=10
                 print(f"@@@来自calculate_maximum_staining_depth@@@")
                 print(f"最大染色深度为{y}cm")
+                y=f"{y:.2f}"
+                y=float(y)
                 return y # 返回最大染色深度
-    return y*0.1# 如果没有找到符合条件的y坐标
+    return round(y*0.1)# 如果没有找到符合条件的y坐标
 
 # 计算长度指数
 def calculate_length_index(img_pil):
@@ -183,6 +192,7 @@ def calculate_length_index(img_pil):
     total_difference_proportion= f"{total_difference_proportion:.2f}"
     print(f"@@@来自calculate_length_index@@@")
     print(f"长度指数: {total_difference_proportion}")
+    total_difference_proportion=float(total_difference_proportion)
     return total_difference_proportion
 # 黑白颜色处理函数
 def black_white_processing(img_pil,resolution):
@@ -205,9 +215,17 @@ def black_white_processing(img_pil,resolution):
     img_pil=Image.fromarray(mask_rgb)  
     return img_pil
 
+# 计算各种参数
+def calculate_parameters(img_pil):
+    global black_area, black_ratio, matrix_flow_depth, priority_flow_percentage, priority_staining_area, maximum_staining_depth, length_index
+    black_area, black_ratio = calculate_black_area_ratio(img_pil)
+    matrix_flow_depth = find_y_coordinate(img_pil)
+    priority_flow_percentage = calculate_priority_flow_percentage(soil_width, matrix_flow_depth, black_area)
+    priority_staining_area = calculate_area_ratio_of_preferred_flow_zone(soil_width, matrix_flow_depth, black_area)
+    maximum_staining_depth = calculate_maximum_staining_depth(img_pil)
+    length_index = calculate_length_index(img_pil)
 #图像处理主函数
 def process_image(img_pil, lower_range, upper_range, resolution):
-    global final_img, black_area, matrix_flow_depth , black_ratio,priority_flow_percentage,priority_staining_area,maximum_staining_depth,length_index
     # 如果图像不是灰度图，则进入颜色处理
     if not is_grayscale_image(img_pil):
         print("是原图，进入颜色处理")
@@ -215,12 +233,8 @@ def process_image(img_pil, lower_range, upper_range, resolution):
     else:
         img_pil = resize_image(img_pil, resolution)  # 调整分辨率
         print("是黑白图，取消颜色处理")
-    black_area, black_ratio=calculate_black_area_ratio(img_pil)
-    matrix_flow_depth=find_y_coordinate(img_pil)
-    priority_flow_percentage=calculate_priority_flow_percentage(soil_width, matrix_flow_depth, black_area)
-    priority_staining_area=calculate_area_ratio_of_preferred_flow_zone(soil_width, matrix_flow_depth, black_area)
-    maximum_staining_depth=calculate_maximum_staining_depth(img_pil)
-    length_index=calculate_length_index(img_pil)
+    # 计算各种参数
+    calculate_parameters(img_pil)
     return img_pil
 
 @app.route("/upload", methods=["POST"])
@@ -247,10 +261,17 @@ def upload_image():
 
 @app.route("/show-data", methods=["GET"])
 def show_data():
-    # 返回已经处理好的 black_area 和 black_ratio
+    # 返回已经处理好的参数
+    print("@@@来自show_data@@@")
+    print(f"----{black_area}-----")
     return jsonify({
         "black_area": black_area,  # 已处理好的黑色区域面积
-        "black_ratio": black_ratio  # 已处理好的黑色像素比例
+        "black_ratio": black_ratio,  # 已处理好的黑色像素比例
+        "matrix_flow_depth":matrix_flow_depth,
+        "priority_flow_percentage":priority_flow_percentage,
+        "priority_staining_area":priority_staining_area,
+        "maximum_staining_depth":maximum_staining_depth,
+        "length_index":length_index,
     })
 
 def start_flask():
@@ -265,5 +286,5 @@ if __name__ == "__main__":
     # 创建Webview窗口，设置自定义大小
     #http://localhost:5173/
     # web/index.html
-    webview.create_window("智算优先流", "http://localhost:5173/", width=1000, height=800, resizable=False)
+    webview.create_window("智算优先流", "web/index.html", width=1000, height=800, resizable=False)
     webview.start()

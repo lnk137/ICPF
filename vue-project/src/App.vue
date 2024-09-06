@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouterView } from 'vue-router';
+import { ref } from "vue";
+import { RouterView } from "vue-router";
 
 // 定义一个全局状态，用于保存图片
 const grayscaleImage = ref<string | null>(null);
@@ -29,22 +29,24 @@ const updateImage = (newImage: string) => {
 
 <style scoped lang="less">
 @max: 100%;
+@sidebar_width: 220px;
 
 .body {
   background-color: #c4d6d0;
   display: flex;
   height: @max;
   width: @max;
-  
-
   .sidebar {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    width: 30vh;
+    width: @sidebar_width;
+    height: 100vh;
     background: linear-gradient(#26A484, #26a4a4);
     border-radius: 7px;
     flex: 0 0 auto; /* 防止侧边栏被压缩 */
+    position: fixed; /* 固定在页面左侧 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 添加阴影 */
   }
 
   .nav-link {
@@ -59,7 +61,7 @@ const updateImage = (newImage: string) => {
     border-radius: 5px;
     justify-content: center;
     flex-direction: column;
-    transition: background-color 0.3s, opacity 0.3s ,color 0.3s;
+    transition: background-color 0.3s, opacity 0.3s, color 0.3s;
   }
 
   .nav-link:hover {
@@ -78,7 +80,10 @@ const updateImage = (newImage: string) => {
 
   .content {
     flex-grow: 1;
+
     padding: 20px;
+    overflow-y: auto; /* 当内容超出时可以滚动 */
+    margin-left: @sidebar_width; /* 留出侧边栏的空间 */
   }
 }
 </style>
