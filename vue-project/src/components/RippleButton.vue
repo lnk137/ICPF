@@ -28,7 +28,7 @@ const props = defineProps({
   },
   textColor: {
     type: String,
-    default: '#000000',
+    default: '#45525f',
   },
   borderRadius: {
     type: String,
@@ -74,6 +74,8 @@ const handleClick = (event) => {
 
 <style scoped>
 .animated-button {
+  width:180px;
+  height: 60px;
   position: relative;
   display: inline-block;
   padding: 10px 20px;
@@ -83,6 +85,7 @@ const handleClick = (event) => {
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: none !important; /* 强制移除边框 */
+  box-shadow: 0 4px 12px rgba(37, 114, 85, 0.352);
 }
 
 .animated-button:hover {
@@ -102,5 +105,10 @@ const handleClick = (event) => {
   transform: scale(4);
   opacity: 1;
   transition: transform 1s ease, opacity 1s ease;
+}
+.button-text{
+  font-size: 23px;
+  font-weight: bold;
+  color:#45525f
 }
 </style>

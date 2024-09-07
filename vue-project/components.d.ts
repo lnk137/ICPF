@@ -7,10 +7,12 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Atom: typeof import('./src/components/图标/atom.vue')['default']
     AudioPlayer: typeof import('./src/components/音乐/audioPlayer.vue')['default']
     CardComponent: typeof import('./src/components/CardComponent.vue')['default']
     CardGroup: typeof import('./src/components/三百分比卡片/CardGroup.vue')['default']
     ImageUploader: typeof import('./src/components/ImageUploader.vue')['default']
+    Notification: typeof import('./src/components/Notification.vue')['default']
     PercentageGroup: typeof import('./src/components/PercentageGroup.vue')['default']
     RippleButton: typeof import('./src/components/RippleButton.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

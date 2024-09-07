@@ -106,6 +106,9 @@
         </div>
       </div>
     </div>
+    <div class="button-container">
+      <RippleButton @click="handleClick">保存参数</RippleButton>
+    </div>
     <div>
       <img :src="tree" alt="树木" class="image" />
     </div>
@@ -114,21 +117,52 @@
 
 <script setup>
 import tree from "@/assets/树木.png"; // 通过import导入图片
-import { ref, onMounted, onUnmounted } from "vue";
-// @ts-ignore
+import { ref, onMounted, watch } from "vue";
 
 // 定义数据
-const lowerHue = ref(35);
-const lowerSaturation = ref(35);
-const lowerValue = ref(35);
-const upperHue = ref(255);
-const upperSaturation = ref(255);
-const upperValue = ref(255);
+const lowerHue = ref();
+const lowerSaturation = ref();
+const lowerValue = ref();
+const upperHue = ref();
+const upperSaturation = ref();
+const upperValue = ref();
+const resolutionWidth = ref(); // 默认分辨率宽度
+const resolutionHeight = ref(); // 默认分辨率高度
+const soilWidth = ref(); // 土壤剖面宽度
+const startHeight = ref(); // 起始高度
 
-const resolutionWidth = ref(500); // 默认分辨率宽度
-const resolutionHeight = ref(500); // 默认分辨率高度
-const soilWidth = ref(500); // 土壤剖面宽度
-const startHeight = ref(500); // 起始高度
+// 从 localStorage 加载数据
+const loadDataFromLocalStorage = () => {
+  lowerHue.value = localStorage.getItem('lowerHue') || 35;
+  lowerSaturation.value = localStorage.getItem('lowerSaturation') || 35;
+  lowerValue.value = localStorage.getItem('lowerValue') || 35;
+  upperHue.value = localStorage.getItem('upperHue') || 255;
+  upperSaturation.value = localStorage.getItem('upperSaturation') || 255;
+  upperValue.value = localStorage.getItem('upperValue') || 255;
+  resolutionWidth.value = localStorage.getItem('resolutionWidth') || 500;
+  resolutionHeight.value = localStorage.getItem('resolutionHeight') || 500;
+  soilWidth.value = localStorage.getItem('soilWidth') || 50;
+  startHeight.value = localStorage.getItem('startHeight') || 0;
+};
+
+// 监听值的变化并保存到 localStorage
+watch([lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, resolutionWidth, resolutionHeight, soilWidth, startHeight], () => {
+  localStorage.setItem('lowerHue', lowerHue.value);
+  localStorage.setItem('lowerSaturation', lowerSaturation.value);
+  localStorage.setItem('lowerValue', lowerValue.value);
+  localStorage.setItem('upperHue', upperHue.value);
+  localStorage.setItem('upperSaturation', upperSaturation.value);
+  localStorage.setItem('upperValue', upperValue.value);
+  localStorage.setItem('resolutionWidth', resolutionWidth.value);
+  localStorage.setItem('resolutionHeight', resolutionHeight.value);
+  localStorage.setItem('soilWidth', soilWidth.value);
+  localStorage.setItem('startHeight', startHeight.value);
+});
+
+// 页面加载时从 localStorage 加载数据
+onMounted(() => {
+  loadDataFromLocalStorage();
+});
 
 // 构建数据对象
 const getColorRanges = () => {
@@ -165,28 +199,18 @@ const sendColorRanges = async () => {
   }
 };
 
-// 设置定时器
-let intervalId;
-
-onMounted(() => {
-  intervalId = setInterval(sendColorRanges, 500); // 每5秒发送一次数据
-});
-
-onUnmounted(() => {
-  clearInterval(intervalId); // 组件卸载时清除定时器
-});
-
 // 手动触发数据发送
 const handleClick = async () => {
   try {
     await sendColorRanges();
-    alert("Color ranges sent successfully!");
+    alert("参数修改成功");
   } catch (error) {
-    alert("Failed to send color ranges.");
+    alert("参数上传失败");
     console.error(error);
   }
 };
 </script>
+
 
 
 
@@ -301,5 +325,10 @@ label {
   left: 250px;
   right: 0;
   opacity: 0.9; /* 如果需要，可以添加透明度效果 */
+}
+.button-container{
+  position: absolute;
+  top: 300px;
+  left: 53%;
 }
 </style>

@@ -6,12 +6,13 @@ import threading
 import numpy as np
 import cv2
 from flask_cors import CORS
+import requests  
 #pyinstaller main.spec
 app = Flask(__name__)
 CORS(app)
 
 # 全局变量存储颜色范围和其他参数
-lower_range_hsv =[35, 35, 35]
+lower_range_hsv =[34, 35, 35]
 upper_range_hsv = [255, 255, 255]
 resolution = "500x500"
 soil_width = 50
@@ -24,19 +25,25 @@ def get_data():
     global lower_range_hsv, upper_range_hsv, resolution, soil_width, start_height
     data = request.json
 
-    # 解析颜色范围和其他参数
+    # 解析颜色范围和其他参数，并确保数值为整数类型
     lower_range_hsv = data.get("lower_range", None)
     upper_range_hsv = data.get("upper_range", None)
     resolution = data.get("resolution", None)
-    soil_width = data.get("soil_width", None)
-    start_height = data.get("start_height", None)
+    soil_width = int(data.get("soil_width", 0))
+    start_height = int(data.get("start_height", 0))
 
+    # 确保 HSV 范围内的数值为整数类型
+    if lower_range_hsv is not None:
+        lower_range_hsv = [int(value) for value in lower_range_hsv]
+
+    if upper_range_hsv is not None:
+        upper_range_hsv = [int(value) for value in upper_range_hsv]
     # 调试输出，检查接收到的数据
     print(f"Lower HSV range: {lower_range_hsv}")
     print(f"Upper HSV range: {upper_range_hsv}")
     print(f"Resolution: {resolution}")
     print(f"Soil width: {soil_width}")
-    print(f"Start height: {start_height}")
+    print(f"start_height: {start_height}")
 
     return jsonify({
         "lower_hsv": lower_range_hsv,
@@ -136,7 +143,8 @@ def calculate_black_area_ratio(img_pil):
 def find_y_coordinate(img_pil, target_ratio=0.8):
     img = np.array(img_pil.convert("L"))  # 转换为灰度图像数组
     height, width = img.shape
-    for y in range(int(start_height), height):
+    print("开始计算基质流")
+    for y in range(start_height, height):
         row = img[y, :]  # 获取当前行像素值
         black_pixels = np.sum(row <= 120)  # 计算当前行黑色像素数量
         black_ratio = black_pixels / width  # 计算当前行黑色像素比例
@@ -145,12 +153,12 @@ def find_y_coordinate(img_pil, target_ratio=0.8):
             print(f"@@@来自find_y_coordinate@@@")
             print(f"基质流深度为{matrix_flow_depth}")
             return matrix_flow_depth  # 返回符合条件的y坐标
-    matrix_flow_depth=None # 如果没有找到符合条件的y坐标
+    return 0 # 如果没有找到符合条件的y坐标
     
 # 计算优先流百分数
 def calculate_priority_flow_percentage(soil_width, matrix_flow_depth, black_area):
-    a = float(soil_width) * float(matrix_flow_depth)  # 计算a值
-    b = float(black_area)  # 获取染色面积并转换为浮点数
+    a = soil_width * matrix_flow_depth  # 计算a值
+    b = black_area  # 获取染色面积并转换为浮点数
     print(f"a值: {a}, b值: {b}")
     result = f"{(1 - a / b) * 100:.2f}"  # 计算优先流百分数
     print("@@@来自calculate_priority_flow_percentage@@@")
@@ -261,7 +269,6 @@ def process_image(img_pil, lower_range, upper_range, resolution):
     calculate_parameters(img_pil)
     
     return img_pil
-
 @app.route("/upload", methods=["POST"])
 def upload_image():
     global lower_range_hsv, upper_range_hsv
@@ -275,6 +282,8 @@ def upload_image():
 
     # 调用处理函数处理图像
     processed_img = process_image(img, lower_range_hsv, upper_range_hsv, resolution)
+    global original_picture
+    original_picture=processed_img
     display_img = processed_img.copy()
     display_img=draw_red_line(display_img, matrix_flow_depth*10)  # 绘制基质流深度的红线
     display_img=draw_blue_line(display_img, start_height)  # 绘制基质流深度的红线
@@ -301,6 +310,42 @@ def show_data():
         "maximum_staining_depth":maximum_staining_depth,
         "length_index":length_index,
     })
+# 新增保存图像的路由
+
+# 保存图像的路由
+@app.route("/save-image", methods=["POST"])
+def save_image_route():
+    global original_picture
+    if original_picture is None:
+        return jsonify({"error": "没有图像可保存"}), 400
+
+    try:
+        # 使用 pywebview 打开文件保存对话框
+        save_path = webview.windows[0].create_file_dialog(
+            webview.SAVE_DIALOG, 
+            file_types=('PNG files (*.png)',), 
+            save_filename='processed_image.png'
+        )
+
+        # 如果用户选择了保存路径
+        if save_path:
+            # `save_path` 是一个列表，取第一个元素作为文件路径
+            file_path = save_path[0] if isinstance(save_path, list) else save_path
+
+            # 确保保存路径中有扩展名
+            if not file_path.lower().endswith('.png'):
+                file_path = f"{file_path}.png"  # 使用新的字符串构建带有 .png 扩展名的路径
+
+            # 强制使用 'PNG' 格式保存
+            original_picture.save(file_path, 'PNG')
+            print(f"图像已保存到 {file_path}")
+            return jsonify({"message": "图像已成功保存"}), 200
+        else:
+            return jsonify({"error": "用户取消了保存操作"}), 400
+
+    except Exception as e:
+        print(f"保存图像时出错: {e}")
+        return jsonify({"error": f"保存图像时出错: {e}"}), 500
 
 def start_flask():
     app.run(port=5000)

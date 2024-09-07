@@ -8,15 +8,16 @@
     </div>
 
     <div class="content">
-      <!-- 使用 RouterView 传递全局图片状态 -->
-      <RouterView :grayscaleImage="grayscaleImage" :updateImage="updateImage" />
+      <keep-alive>
+        <router-view :grayscaleImage="grayscaleImage" :updateImage="updateImage" />
+      </keep-alive>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { RouterView } from "vue-router";
+// import { RouterView } from "vue-router";
 
 // 定义一个全局状态，用于保存图片
 const grayscaleImage = ref<string | null>(null);

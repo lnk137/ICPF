@@ -4,22 +4,28 @@
 
     <div v-if="grayscaleImage" class="image-preview">
       <p class="image-preview-title">处理后:</p>
-      <!-- 点击图片时，显示在弹出窗口中 -->
       <img :src="grayscaleImage" alt="Grayscale Image" @click="openImageModal" />
+      <!-- 保存图片的图标按钮 -->
+      <button class="save-button" @click="saveImage" title="保存图片">
+        💾
+      </button>
     </div>
 
-    <!-- 弹出窗口 -->
     <div v-if="showModal" class="modal" @click="closeImageModal">
       <div class="modal-content">
         <img :src="grayscaleImage" alt="Grayscale Image" />
       </div>
     </div>
+
+    <!-- 引入 Notification 组件 -->
+    <Notification :message="notification.message" :type="notification.type" v-if="notification.show" />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import ImageUploader from '../components/ImageUploader.vue';
+
 
 const props = defineProps({
   grayscaleImage: String,
@@ -28,6 +34,7 @@ const props = defineProps({
 
 const grayscaleImage = ref(props.grayscaleImage);
 const showModal = ref(false);
+const notification = ref({ show: false, message: '', type: 'success' });
 
 const openImageModal = () => {
   showModal.value = true;
@@ -35,6 +42,14 @@ const openImageModal = () => {
 
 const closeImageModal = () => {
   showModal.value = false;
+};
+
+// 显示气泡提示框
+const showNotification = (message, type = 'success') => {
+  notification.value = { show: true, message, type };
+  setTimeout(() => {
+    notification.value.show = false;
+  }, 3000); // 3秒后自动隐藏
 };
 
 const uploadImage = async (file) => {
@@ -52,11 +67,29 @@ const uploadImage = async (file) => {
       const imageUrl = URL.createObjectURL(blob);
       grayscaleImage.value = imageUrl;
       props.updateImage(imageUrl);
+      showNotification('图片上传成功🆗', 'success');
     } else {
-      console.error("Upload failed");
+      showNotification('上传失败，请重试', 'error');
     }
   } catch (error) {
-    console.error("An error occurred during the upload process:", error);
+    showNotification('上传过程中出现错误', 'error');
+  }
+};
+
+// 发送保存指令到后端
+const saveImage = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/save-image", {
+      method: "POST"
+    });
+
+    if (response.ok) {
+      showNotification('图像已成功保存', 'success');
+    } else {
+      showNotification('保存失败，请重试', 'error');
+    }
+  } catch (error) {
+    showNotification('保存图像时出错', 'error');
   }
 };
 </script>
@@ -69,6 +102,10 @@ const uploadImage = async (file) => {
   justify-content: center;
 }
 
+.image-preview {
+  position: relative;
+}
+
 .image-preview img {
   max-width: 400px;
   max-height: 400px;
@@ -77,14 +114,23 @@ const uploadImage = async (file) => {
   cursor: pointer;
 }
 
-.image-preview-title {
+.save-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #fff;
+}
 
+.image-preview-title {
   color: #626F7B;
   font-size: 20px;
   font-weight: bold;
 }
 
-/* Modal 样式 */
 .modal {
   position: fixed;
   top: 0;
