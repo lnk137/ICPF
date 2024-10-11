@@ -2,24 +2,14 @@ import numpy as np
 import cv2
 from PIL import Image, ImageOps, ImageDraw
 from sklearn.cluster import KMeans
-from app import (
-    lower_range_hsv, upper_range_hsv, resolution, soil_width, start_height,
-    black_area, black_ratio, matrix_flow_depth, priority_flow_percentage,
-    priority_staining_area, maximum_staining_depth, length_index
-)
+import config  # 导入config模块
 
-def parse_resolution(resolution_str):
-    if resolution_str:
-        try:
-            width, height = map(int, resolution_str.lower().split('x'))
-            return width, height
-        except ValueError:
-            print("解析分辨率失败，使用默认500x500")
-    return 500, 500  # 默认分辨率
 
+# 调整图像分辨率
 def resize_image(img_pil, resolution):
-    width, height = parse_resolution(resolution)
-    return img_pil.resize((width, height), Image.LANCZOS)
+    # 直接从 resolution 获取宽和高
+    width, height = config.resolution
+    return img_pil.resize((width, height), Image.LANCZOS)  # 使用 LANCZOS 替换 ANTIALIAS
 
 def is_grayscale_image(img_pil):
     img_array = np.array(img_pil.convert("L"))
@@ -36,13 +26,19 @@ def is_grayscale_image(img_pil):
     return False
 
 def black_white_processing(img_pil, resolution):
+    # 使用 config 中的全局变量
+    lower_range_hsv = config.lower_range_hsv
+    upper_range_hsv = config.upper_range_hsv
+
     img_resized = resize_image(img_pil, resolution)
     img_cv = np.array(img_resized)
     img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR)
     hsv_img = cv2.cvtColor(img_cv, cv2.COLOR_BGR2HSV)
 
-    if len(lower_range_hsv) != 3 and len(upper_range_hsv) != 3:
+    if len(lower_range_hsv) != 3 or len(upper_range_hsv) != 3:
         raise ValueError("lower_range和upper_range必须是长度为3的列表或数组")
+    
+    # 创建颜色掩码
     mask = cv2.inRange(hsv_img, np.array(lower_range_hsv), np.array(upper_range_hsv))
     stain_img = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
 
@@ -67,6 +63,7 @@ def calculate_black_area_ratio(img_pil):
 def find_y_coordinate(img_pil, target_ratio=0.8):
     img = np.array(img_pil.convert("L"))
     height, width = img.shape
+    start_height = config.start_height  # 从config中获取起始高度
     print("开始计算基质流")
     for y in range(start_height, height):
         row = img[y, :]
@@ -162,13 +159,12 @@ def draw_green_line(img_pil, maximum_staining_depth):
     return img_pil
 
 def calculate_parameters(img_pil):
-    global black_area, black_ratio, matrix_flow_depth, priority_flow_percentage, priority_staining_area, maximum_staining_depth, length_index
-    black_area, black_ratio = calculate_black_area_ratio(img_pil)
-    matrix_flow_depth = find_y_coordinate(img_pil)
-    priority_flow_percentage = calculate_priority_flow_percentage(soil_width, matrix_flow_depth, black_area)
-    priority_staining_area = calculate_area_ratio_of_preferred_flow_zone(soil_width, matrix_flow_depth, black_area)
-    maximum_staining_depth = calculate_maximum_staining_depth(img_pil)
-    length_index = calculate_length_index(img_pil)
+    config.black_area, config.black_ratio = calculate_black_area_ratio(img_pil)
+    config.matrix_flow_depth = find_y_coordinate(img_pil)
+    config.priority_flow_percentage = calculate_priority_flow_percentage(config.soil_width, config.matrix_flow_depth, config.black_area)
+    config.priority_staining_area = calculate_area_ratio_of_preferred_flow_zone(config.soil_width, config.matrix_flow_depth, config.black_area)
+    config.maximum_staining_depth = calculate_maximum_staining_depth(img_pil)
+    config.length_index = calculate_length_index(img_pil)
 
 def process_image(img_pil, lower_range, upper_range, resolution):
     img_cv = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)

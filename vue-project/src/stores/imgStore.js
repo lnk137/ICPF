@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const useStore = defineStore('useStore', () => {
+export const useImgStore = defineStore('useStore', () => {
   const grayscaleImage = ref(null);
   const original_img = ref(null);
   const k_means_img = ref(null);

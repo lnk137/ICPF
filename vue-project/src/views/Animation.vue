@@ -48,7 +48,7 @@
     // 模拟加载时间，3秒后隐藏启动动画并跳转路由
     setTimeout(() => {
       showSplashScreen.value = false;
-      router.push("/page1"); // 跳转到目标页面
+      router.push("/set"); // 跳转到目标页面
     }, 3000);
   });
   </script>

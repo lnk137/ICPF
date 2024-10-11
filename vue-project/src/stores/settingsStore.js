@@ -25,6 +25,41 @@ export const useSettingsStore = defineStore('settingsStore', () => {
   const updateSoilWidth = (value) => (soilWidth.value = value);
   const updateStartHeight = (value) => (startHeight.value = value);
 
+  // 获取颜色范围数据对象
+  const getColorRanges = () => {
+    return {
+      lower_range: [lowerHue.value, lowerSaturation.value, lowerValue.value],
+      upper_range: [upperHue.value, upperSaturation.value, upperValue.value],
+      resolution: [resolutionWidth.value, resolutionHeight.value], // 将分辨率改为数组形式
+      soil_width: soilWidth.value,
+      start_height: startHeight.value,
+    };
+  };
+
+  // 发送颜色范围数据
+  const sendColorRanges = async () => {
+    const data = getColorRanges();
+
+    try {
+      const response = await fetch("http://localhost:5000/color-ranges", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send color ranges");
+      }
+
+      const result = await response.json();
+      console.log("Data sent successfully:", result);
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
+
   return {
     lowerHue,
     lowerSaturation,
@@ -46,5 +81,7 @@ export const useSettingsStore = defineStore('settingsStore', () => {
     updateResolutionHeight,
     updateSoilWidth,
     updateStartHeight,
+    getColorRanges,  // 将 getColorRanges 函数暴露出来（可选）
+    sendColorRanges, // 暴露 sendColorRanges 函数用于发送数据
   };
 });
