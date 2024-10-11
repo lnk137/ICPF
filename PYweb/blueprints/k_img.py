@@ -36,8 +36,7 @@ def k_means():
         img_processor = k_means_img(resolution=resolution)
 
         # 调用 upload_image 处理图像
-        processed_image = img_processor.upload_image(img, lower_range_hsv, upper_range_hsv)
-
+        processed_image = img_processor.process_image(img, lower_range_hsv, upper_range_hsv)
         # 将处理后的图像保存到字节流中
         img_io = io.BytesIO()
         processed_image.save(img_io, "PNG")

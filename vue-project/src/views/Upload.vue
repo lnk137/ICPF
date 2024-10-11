@@ -11,7 +11,10 @@
         </div>
       </div>
       <img v-if="!isKImg" :src="imageStore.grayscaleImage" alt="Grayscale Image" @click="openImageModal" />
-      <img v-else :src="imageStore.k_means_img" alt="K-means Image" @click="openImageModal" />
+      <div v-if="isKImg" class="k_area">
+        <img :src="imageStore.k_means_img" alt="K-means Image" @click="openImageModal" />
+      </div>
+
 
     </div>
   </div>
@@ -89,11 +92,14 @@ const switching_state = () => {
 }
 //页面挂载时，更新参数，重新处理原始图像
 onMounted(() => {
-  if (imageStore.original_img) {
+  if (settingsStore.isSetUpdate) {
     settingsStore.sendColorRanges()
     uploadImage(fileStore.originalFile);
+    settingsStore.updateIsSetUpdate(false);
   }
 });
+
+
 </script>
 
 <style scoped lang="less">

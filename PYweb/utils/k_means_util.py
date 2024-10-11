@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from sklearn.cluster import KMeans  # 导入KMeans
 import config  # 导入config模块
+
 class k_means_img:
     def __init__(self, resolution=(500, 500), k=4):
         self.resolution = resolution
@@ -75,7 +76,7 @@ class k_means_img:
 
         # 将 NumPy 数组转换为 PIL 图像，最终不包含透明度
         stain_img = Image.fromarray(white_background_img)
-
+        stain_img=self.apply_gaussian_blur(stain_img)
         # 调用segment_image生成分割结果
         segmented_image = self.segment_image(stain_img)
 
@@ -85,11 +86,16 @@ class k_means_img:
     def process_image(self, img_pil, lower_range_hsv, upper_range_hsv):
         processed_img = self.black_white_processing(img_pil, lower_range_hsv, upper_range_hsv)
         return processed_img
-
-    # 上传并处理图像
-    def upload_image(self, img, lower_range_hsv, upper_range_hsv):
-        processed_img = self.process_image(img, lower_range_hsv, upper_range_hsv)
-        return processed_img
+    
+    # 高斯模糊函数
+    def apply_gaussian_blur(self, img_pil, ksize=(15, 15)):
+        # 将 PIL 图像转换为 NumPy 数组
+        img_cv = np.array(img_pil)
+        # 对图像应用高斯模糊
+        blurred_img_cv = cv2.GaussianBlur(img_cv, ksize, 0)
+        # 将模糊后的图像转换回 PIL 格式
+        blurred_img_pil = Image.fromarray(blurred_img_cv)
+        return blurred_img_pil
 
 # 示例如何使用工具类
 if __name__ == "__main__":
@@ -97,13 +103,16 @@ if __name__ == "__main__":
     img_path = "1.png"  # 替换为实际的图像路径
     lower_range_hsv = config.lower_range_hsv
     upper_range_hsv = config.upper_range_hsv
-    resolution =config.resolution
+    resolution = config.resolution
+
+    # 打开输入图像
+    img = Image.open(img_path)
 
     # 实例化工具类
     img_processor = k_means_img(resolution=resolution)
 
-    # 调用 upload_image 处理图像
-    processed_image = img_processor.upload_image(img, lower_range_hsv, upper_range_hsv)
+    # 调用 process_image 处理图像
+    processed_image = img_processor.process_image(img, lower_range_hsv, upper_range_hsv)
     
     # 保存处理后的图像
     processed_image.save("processed_image.png")

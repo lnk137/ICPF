@@ -116,19 +116,29 @@
 <script setup>
 import tree from "@/assets/树木.png";
 import { useSettingsStore } from "@/stores/settingsStore"; // 导入 Pinia Store
-
+import { ref ,watch} from "vue";
 const settingsStore = useSettingsStore();
 
-// 手动触发数据发送
-const handleClick = async () => {
-  try {
-    await settingsStore.sendColorRanges();
-    alert("参数修改成功");
-  } catch (error) {
-    alert("参数上传失败");
-    console.error(error);
-  }
-};
+watch(
+  () => [
+    settingsStore.lowerHue,
+    settingsStore.lowerSaturation,
+    settingsStore.lowerValue,
+    settingsStore.upperHue,
+    settingsStore.upperSaturation,
+    settingsStore.upperValue,
+    settingsStore.resolutionWidth,
+    settingsStore.resolutionHeight,
+    settingsStore.soilWidth,
+    settingsStore.startHeight
+  ],
+  () => {
+      console.log("参数发生变化，重新处理图像");
+      settingsStore.updateIsSetUpdate(true);
+  },
+  { deep: true }
+);
+
 </script>
 
 <style scoped lang="less">

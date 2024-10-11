@@ -13,6 +13,7 @@ export const useSettingsStore = defineStore('settingsStore', () => {
   const soilWidth = ref(50);
   const startHeight = ref(0);
 
+  const isSetUpdate = ref(false);
   // 定义更新方法
   const updateLowerHue = (value) => (lowerHue.value = value);
   const updateLowerSaturation = (value) => (lowerSaturation.value = value);
@@ -24,7 +25,7 @@ export const useSettingsStore = defineStore('settingsStore', () => {
   const updateResolutionHeight = (value) => (resolutionHeight.value = value);
   const updateSoilWidth = (value) => (soilWidth.value = value);
   const updateStartHeight = (value) => (startHeight.value = value);
-
+  const updateIsSetUpdate = (value) => (isSetUpdate.value = value);
   // 获取颜色范围数据对象
   const getColorRanges = () => {
     return {
@@ -83,5 +84,7 @@ export const useSettingsStore = defineStore('settingsStore', () => {
     updateStartHeight,
     getColorRanges,  // 将 getColorRanges 函数暴露出来（可选）
     sendColorRanges, // 暴露 sendColorRanges 函数用于发送数据
+    isSetUpdate,
+    updateIsSetUpdate,
   };
 });
