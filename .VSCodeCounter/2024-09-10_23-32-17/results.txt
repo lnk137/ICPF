@@ -1,0 +1,99 @@
+Date : 2024-09-10 23:32:17
+Directory : e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF
+Total : 50 files,  6065 codes, 273 comments, 349 blanks, all 6687 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          4 |      3,774 |          0 |          6 |      3,780 |
+| Vue                |         18 |      1,762 |         89 |        235 |      2,086 |
+| Python             |          1 |        261 |         52 |         51 |        364 |
+| TypeScript         |          6 |         79 |         11 |         18 |        108 |
+| JavaScript         |          8 |         78 |        120 |          8 |        206 |
+| CSS                |          9 |         53 |          1 |         14 |         68 |
+| HTML               |          2 |         27 |          0 |          2 |         29 |
+| Markdown           |          1 |         20 |          0 |         14 |         34 |
+| JSON with Comments |          1 |         11 |          0 |          1 |         12 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                      | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                         |         50 |      6,065 |        273 |        349 |      6,687 |
+| PYweb                                                                                     |         18 |        361 |        172 |         68 |        601 |
+| PYweb (Files)                                                                             |          1 |        261 |         52 |         51 |        364 |
+| PYweb\web                                                                                 |         17 |        100 |        120 |         17 |        237 |
+| PYweb\web (Files)                                                                         |          1 |         14 |          0 |          1 |         15 |
+| PYweb\web\assets                                                                          |         16 |         86 |        120 |         16 |        222 |
+| vue-project                                                                               |         32 |      5,704 |        101 |        281 |      6,086 |
+| vue-project (Files)                                                                       |         11 |      3,870 |         11 |         31 |      3,912 |
+| vue-project\src                                                                           |         21 |      1,834 |         90 |        250 |      2,174 |
+| vue-project\src (Files)                                                                   |          2 |         79 |          6 |         17 |        102 |
+| vue-project\src\components                                                                |         11 |      1,003 |         39 |        131 |      1,173 |
+| vue-project\src\components (Files)                                                        |          7 |        609 |         23 |        100 |        732 |
+| vue-project\src\components\三百分比卡片                                                         |          2 |        123 |          2 |         17 |        142 |
+| vue-project\src\components\图标                                                             |          1 |         30 |          5 |          7 |         42 |
+| vue-project\src\components\音乐                                                             |          1 |        241 |          9 |          7 |        257 |
+| vue-project\src\router                                                                    |          1 |         20 |          0 |          4 |         24 |
+| vue-project\src\styles                                                                    |          1 |         45 |          1 |          6 |         52 |
+| vue-project\src\views                                                                     |          6 |        687 |         44 |         92 |        823 |
++-------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                  | language           | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\main.py                                   | Python             |        261 |         52 |         51 |        364 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-B7s-uG_1.js              | JavaScript         |         11 |         15 |          1 |         27 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-BKCEzGor.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-BU8tcxCA.js              | JavaScript         |         11 |         15 |          1 |         27 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-B_Jg5fsH.js              | JavaScript         |         16 |         15 |          1 |         32 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-BbmuV81X.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-BoQBxV1L.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-Bp1bv30h.js              | JavaScript         |          6 |         15 |          1 |         22 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-C9u7-wU9.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-CovWgdaA.js              | JavaScript         |         11 |         15 |          1 |         27 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-CrbKm4SS.js              | JavaScript         |          6 |         15 |          1 |         22 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-D-WCQn_T.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-DHtbpgJ6.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-DQ--Hxx3.js              | JavaScript         |          6 |         15 |          1 |         22 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-EnBmE0nO.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-m_P8RdWr.js              | JavaScript         |         11 |         15 |          1 |         27 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\assets\index-uqEM1Dcu.css             | CSS                |          1 |          0 |          1 |          2 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\PYweb\web\index.html                            | HTML               |         14 |          0 |          1 |         15 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\README.md                           | Markdown           |         20 |          0 |         14 |         34 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\auto-imports.d.ts                   | TypeScript         |          3 |          5 |          2 |         10 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\components.d.ts                     | TypeScript         |         18 |          5 |          2 |         25 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\env.d.ts                            | TypeScript         |          5 |          0 |          1 |          6 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\index.html                          | HTML               |         13 |          0 |          1 |         14 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\package-lock.json                   | JSON               |      3,706 |          0 |          1 |      3,707 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\package.json                        | JSON               |         37 |          0 |          1 |         38 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\App.vue                         | Vue                |         72 |          6 |         12 |         90 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\CardComponent.vue    | Vue                |        103 |          6 |         14 |        123 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\ImageUploader.vue    | Vue                |         66 |          0 |         10 |         76 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\Notification.vue     | Vue                |         56 |          1 |          9 |         66 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\PercentageGroup.vue  | Vue                |         56 |          2 |          8 |         66 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\RippleButton.vue     | Vue                |         97 |          6 |         12 |        115 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\SimpleCard.vue       | Vue                |         44 |          6 |          5 |         55 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\WifiLoader.vue       | Vue                |        187 |          2 |         42 |        231 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\三百分比卡片\CardGroup.vue | Vue                |         30 |          2 |          4 |         36 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\三百分比卡片\temp.vue      | Vue                |         93 |          0 |         13 |        106 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\图标\atom.vue          | Vue                |         30 |          5 |          7 |         42 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\components\音乐\audioPlayer.vue   | Vue                |        241 |          9 |          7 |        257 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\main.ts                         | TypeScript         |          7 |          0 |          5 |         12 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\router\index.ts                 | TypeScript         |         20 |          0 |          4 |         24 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\styles\variables.css            | CSS                |         45 |          1 |          6 |         52 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\views\Animation.vue             | Vue                |        106 |         12 |         18 |        136 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\views\Page1.vue                 | Vue                |        293 |         19 |         23 |        335 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\views\Page2.vue                 | Vue                |        129 |          4 |         24 |        157 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\views\Page3.vue                 | Vue                |         94 |          8 |         14 |        116 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\views\Show.vue                  | Vue                |          8 |          0 |          5 |         13 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\src\views\Test.vue                  | Vue                |         57 |          1 |          8 |         66 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\tsconfig.app.json                   | JSON               |         13 |          0 |          2 |         15 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\tsconfig.json                       | JSON with Comments |         11 |          0 |          1 |         12 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\tsconfig.node.json                  | JSON               |         18 |          0 |          2 |         20 |
+| e:\AAAAAAAA\VScode_HugeProject\REEFSEFSEF\vue-project\vite.config.ts                      | TypeScript         |         26 |          1 |          4 |         31 |
+| Total                                                                                     |                    |      6,065 |        273 |        349 |      6,687 |
++-------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

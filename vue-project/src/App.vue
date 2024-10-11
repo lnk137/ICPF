@@ -4,29 +4,19 @@
       <router-link to="/page1" class="nav-link">参数调整</router-link>
       <router-link to="/page2" class="nav-link">导入图片</router-link>
       <router-link to="/page3" class="nav-link">结果查看</router-link>
-      <router-link to="/test" class="nav-link">测试页面</router-link>
+      <router-link to="/test" class="nav-link">测试</router-link>
     </div>
 
     <div class="content">
-      <keep-alive>
-        <router-view :grayscaleImage="grayscaleImage" :updateImage="updateImage" />
-      </keep-alive>
+        <router-view />
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from "vue";
-// import { RouterView } from "vue-router";
+<script setup >
 
-// 定义一个全局状态，用于保存图片
-const grayscaleImage = ref<string | null>(null);
-
-// 更新图片的全局状态
-const updateImage = (newImage: string) => {
-  grayscaleImage.value = newImage;
-};
 </script>
+
 
 <style scoped lang="less">
 @max: 100%;

@@ -52,8 +52,6 @@ def get_data():
         "soil_width": soil_width,
         "start_height": start_height,
     })
-
-
 # 获取分辨率
 def parse_resolution(resolution_str):
     # 解析分辨率字符串并返回宽度和高度
@@ -71,7 +69,46 @@ def resize_image(img_pil, resolution):
     width, height = parse_resolution(resolution)
     return img_pil.resize((width, height), Image.LANCZOS)  # 使用 LANCZOS 替换 ANTIALIAS
 
+# k聚类
+def segment_image(image, k=4, blur_ksize=(23, 23)):
+    # 转换为numpy数组
+    image = np.array(image)
+    # 高斯模糊处理，降噪
+    image_blur = cv2.GaussianBlur(image, blur_ksize, 0)
 
+    # 将模糊后的图像转换为HSV颜色空间
+    image_hsv = cv2.cvtColor(image_blur, cv2.COLOR_RGB2HSV)
+
+    # 将整个HSV空间的数据转换为二维数组
+    hsv_data = image_hsv.reshape(-1, 3)
+
+    # 使用K-means聚类
+    kmeans = KMeans(n_clusters=k, n_init=10, random_state=42)
+    kmeans.fit(hsv_data)
+
+    # 获取聚类结果的标签
+    labels = kmeans.labels_
+
+    # 获取聚类中心（色相、饱和度和亮度的均值）
+    cluster_centers = kmeans.cluster_centers_
+
+    # 将聚类中心的HSV值转换回RGB
+    cluster_centers_rgb = cv2.cvtColor(cluster_centers.reshape(1, -1, 3).astype(np.uint8), cv2.COLOR_HSV2RGB).reshape(-1, 3)
+
+    # 映射分类结果到聚类中心对应的RGB颜色
+    segmented_image = np.zeros((image.shape[0], image.shape[1], 3), dtype=np.uint8)
+    for idx in range(k):
+        segmented_image[labels.reshape(image.shape[:2]) == idx] = cluster_centers_rgb[idx]
+
+    return segmented_image
+@app.route("/show_k_means", methods=["POST"])
+def show_k_means():
+    segment_img=segment_image(stain_img, k=4, blur_ksize=(23, 23))
+    # 将处理后的图像保存到字节流中返回
+    img_io = io.BytesIO()
+    Image.fromarray(segment_img).save(img_io, "PNG")
+    img_io.seek(0)
+    return send_file(img_io, mimetype="image/png")
 # 判断图像是否是灰度图
 def is_grayscale_image(img_pil):
     # 将图像转换为灰度图像数组
@@ -239,6 +276,8 @@ def black_white_processing(img_pil,resolution):
         raise ValueError("lower_range和upper_range必须是长度为3的列表或数组")
     # 创建颜色掩码
     mask = cv2.inRange(hsv_img, np.array(lower_range_hsv), np.array(upper_range_hsv)) 
+    stain_img=cv2.cvtColor(mask , cv2.COLOR_GRAY2RGB)
+    print("@@@@",stain_img)
     # 反转掩码的黑白颜色
     inverted_mask = cv2.bitwise_not(mask)
     # 将处理后的掩码转换为三通道的图像以便返回和显示
@@ -258,6 +297,12 @@ def calculate_parameters(img_pil):
     length_index = calculate_length_index(img_pil)
 #图像处理主函数
 def process_image(img_pil, lower_range, upper_range, resolution):
+    # 将PIL图像转换为NumPy数组（OpenCV格式：BGR）
+    img_cv = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+    # 高斯模糊处理
+    img_cv = cv2.GaussianBlur(img_cv, (17, 17), 0)  # (9, 9)为高斯核大小，0表示自动计算标准差
+    # 将模糊后的图像从OpenCV格式转换回PIL格式
+    img_pil = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
     # 如果图像不是灰度图，则进入颜色处理
     if not is_grayscale_image(img_pil):
         print("是原图，进入颜色处理")
@@ -267,8 +312,9 @@ def process_image(img_pil, lower_range, upper_range, resolution):
         print("是黑白图，取消颜色处理")
     # 计算各种参数
     calculate_parameters(img_pil)
-    
     return img_pil
+
+
 @app.route("/upload", methods=["POST"])
 def upload_image():
     global lower_range_hsv, upper_range_hsv
@@ -357,7 +403,7 @@ if __name__ == "__main__":
     flask_thread.start()
 
     # 创建Webview窗口，设置自定义大小
-    #http://localhost:5173/
+    # http://localhost:5173/
     # web/index.html
-    webview.create_window("智算优先流", "web/index.html", width=1000, height=800, resizable=False)
-    webview.start()
+    webview.create_window("智算优先流软件", "http://localhost:5173/", width=1000, height=800, resizable=False)
+    webview.start(debug=True)

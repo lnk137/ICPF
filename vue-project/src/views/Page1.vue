@@ -6,7 +6,7 @@
         <div class="input-group">
           <label>H值下限</label>
           <input
-            v-model="lowerHue"
+            v-model="settingsStore.lowerHue"
             type="number"
             min="0"
             max="255"
@@ -16,7 +16,7 @@
         <div class="input-group">
           <label>S值下限</label>
           <input
-            v-model="lowerSaturation"
+            v-model="settingsStore.lowerSaturation"
             type="number"
             min="0"
             max="255"
@@ -26,7 +26,7 @@
         <div class="input-group">
           <label>V值下限</label>
           <input
-            v-model="lowerValue"
+            v-model="settingsStore.lowerValue"
             type="number"
             min="0"
             max="255"
@@ -36,7 +36,7 @@
         <div class="input-group">
           <label>H值上限</label>
           <input
-            v-model="upperHue"
+            v-model="settingsStore.upperHue"
             type="number"
             min="0"
             max="255"
@@ -46,7 +46,7 @@
         <div class="input-group">
           <label>S值上限</label>
           <input
-            v-model="upperSaturation"
+            v-model="settingsStore.upperSaturation"
             type="number"
             min="0"
             max="255"
@@ -56,7 +56,7 @@
         <div class="input-group">
           <label>V值上限</label>
           <input
-            v-model="upperValue"
+            v-model="settingsStore.upperValue"
             type="number"
             min="0"
             max="255"
@@ -69,7 +69,7 @@
         <div class="resolution-container">
           <label>分辨率大小</label>
           <input
-            v-model="resolutionWidth"
+            v-model="settingsStore.resolutionWidth"
             type="number"
             min="1"
             max="2000"
@@ -77,7 +77,7 @@
           />
           <label>x</label>
           <input
-            v-model="resolutionHeight"
+            v-model="settingsStore.resolutionHeight"
             type="number"
             min="1"
             max="2000"
@@ -87,7 +87,7 @@
         <div class="soli-container">
           <label>土壤剖面宽度</label>
           <input
-            v-model="soilWidth"
+            v-model="settingsStore.soilWidth"
             type="number"
             min="1"
             max="1000"
@@ -97,7 +97,7 @@
         <div class="start-height-container">
           <label>起始高度</label>
           <input
-            v-model="startHeight"
+            v-model="settingsStore.startHeight"
             type="number"
             min="0"
             max="20000"
@@ -110,68 +110,26 @@
       <RippleButton @click="handleClick">保存参数</RippleButton>
     </div>
     <div>
-      <img :src="tree" alt="树木" class="image" />
+      <img :src="tree" alt="树木" class="image" draggable="false" />
     </div>
   </div>
 </template>
 
 <script setup>
-import tree from "@/assets/树木.png"; // 通过import导入图片
-import { ref, onMounted, watch } from "vue";
+import tree from "@/assets/树木.png";
+import { ref } from "vue";
+import { useSettingsStore } from "@/stores/settingsStore"; // 导入 Pinia Store
 
-// 定义数据
-const lowerHue = ref();
-const lowerSaturation = ref();
-const lowerValue = ref();
-const upperHue = ref();
-const upperSaturation = ref();
-const upperValue = ref();
-const resolutionWidth = ref(); // 默认分辨率宽度
-const resolutionHeight = ref(); // 默认分辨率高度
-const soilWidth = ref(); // 土壤剖面宽度
-const startHeight = ref(); // 起始高度
+const settingsStore = useSettingsStore();
 
-// 从 localStorage 加载数据
-const loadDataFromLocalStorage = () => {
-  lowerHue.value = localStorage.getItem('lowerHue') || 35;
-  lowerSaturation.value = localStorage.getItem('lowerSaturation') || 35;
-  lowerValue.value = localStorage.getItem('lowerValue') || 35;
-  upperHue.value = localStorage.getItem('upperHue') || 255;
-  upperSaturation.value = localStorage.getItem('upperSaturation') || 255;
-  upperValue.value = localStorage.getItem('upperValue') || 255;
-  resolutionWidth.value = localStorage.getItem('resolutionWidth') || 500;
-  resolutionHeight.value = localStorage.getItem('resolutionHeight') || 500;
-  soilWidth.value = localStorage.getItem('soilWidth') || 50;
-  startHeight.value = localStorage.getItem('startHeight') || 0;
-};
-
-// 监听值的变化并保存到 localStorage
-watch([lowerHue, lowerSaturation, lowerValue, upperHue, upperSaturation, upperValue, resolutionWidth, resolutionHeight, soilWidth, startHeight], () => {
-  localStorage.setItem('lowerHue', lowerHue.value);
-  localStorage.setItem('lowerSaturation', lowerSaturation.value);
-  localStorage.setItem('lowerValue', lowerValue.value);
-  localStorage.setItem('upperHue', upperHue.value);
-  localStorage.setItem('upperSaturation', upperSaturation.value);
-  localStorage.setItem('upperValue', upperValue.value);
-  localStorage.setItem('resolutionWidth', resolutionWidth.value);
-  localStorage.setItem('resolutionHeight', resolutionHeight.value);
-  localStorage.setItem('soilWidth', soilWidth.value);
-  localStorage.setItem('startHeight', startHeight.value);
-});
-
-// 页面加载时从 localStorage 加载数据
-onMounted(() => {
-  loadDataFromLocalStorage();
-});
-
-// 构建数据对象
+// 获取颜色范围数据对象
 const getColorRanges = () => {
   return {
-    lower_range: [lowerHue.value, lowerSaturation.value, lowerValue.value],
-    upper_range: [upperHue.value, upperSaturation.value, upperValue.value],
-    resolution: `${resolutionWidth.value}x${resolutionHeight.value}`,
-    soil_width: soilWidth.value,
-    start_height: startHeight.value,
+    lower_range: [settingsStore.lowerHue, settingsStore.lowerSaturation, settingsStore.lowerValue],
+    upper_range: [settingsStore.upperHue, settingsStore.upperSaturation, settingsStore.upperValue],
+    resolution: `${settingsStore.resolutionWidth}x${settingsStore.resolutionHeight}`,
+    soil_width: settingsStore.soilWidth,
+    start_height: settingsStore.startHeight,
   };
 };
 
@@ -210,7 +168,6 @@ const handleClick = async () => {
   }
 };
 </script>
-
 
 
 

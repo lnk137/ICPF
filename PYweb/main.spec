@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='智算优先流',
+    name='智算优先流软件',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

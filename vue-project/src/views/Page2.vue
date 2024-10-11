@@ -2,9 +2,9 @@
   <div class="page2">
     <ImageUploader @file-selected="uploadImage" />
 
-    <div v-if="grayscaleImage" class="image-preview">
+    <div v-if="imageStore.grayscaleImage" class="image-preview">
       <p class="image-preview-title">处理后:</p>
-      <img :src="grayscaleImage" alt="Grayscale Image" @click="openImageModal" />
+      <img :src="imageStore.grayscaleImage" alt="Grayscale Image" @click="openImageModal" />
       <!-- 保存图片的图标按钮 -->
       <button class="save-button" @click="saveImage" title="保存图片">
         💾
@@ -13,26 +13,20 @@
 
     <div v-if="showModal" class="modal" @click="closeImageModal">
       <div class="modal-content">
-        <img :src="grayscaleImage" alt="Grayscale Image" />
+        <img :src="imageStore.grayscaleImage" alt="Grayscale Image" />
       </div>
     </div>
 
-    <!-- 引入 Notification 组件 -->
     <Notification :message="notification.message" :type="notification.type" v-if="notification.show" />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import ImageUploader from '../components/ImageUploader.vue';
+import { useStore } from '@/stores/imgStore';
 
 
-const props = defineProps({
-  grayscaleImage: String,
-  updateImage: Function,
-});
-
-const grayscaleImage = ref(props.grayscaleImage);
+const imageStore = useStore();
 const showModal = ref(false);
 const notification = ref({ show: false, message: '', type: 'success' });
 
@@ -44,19 +38,18 @@ const closeImageModal = () => {
   showModal.value = false;
 };
 
-// 显示气泡提示框
 const showNotification = (message, type = 'success') => {
   notification.value = { show: true, message, type };
   setTimeout(() => {
     notification.value.show = false;
-  }, 3000); // 3秒后自动隐藏
+  }, 3000);
 };
 
 const uploadImage = async (file) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-
+    imageStore.updateOriginalImage(URL.createObjectURL(file));
     const response = await fetch("http://localhost:5000/upload", {
       method: "POST",
       body: formData,
@@ -65,8 +58,7 @@ const uploadImage = async (file) => {
     if (response.ok) {
       const blob = await response.blob();
       const imageUrl = URL.createObjectURL(blob);
-      grayscaleImage.value = imageUrl;
-      props.updateImage(imageUrl);
+      imageStore.updateGrayscaleImage(imageUrl);
       showNotification('图片上传成功🆗', 'success');
     } else {
       showNotification('上传失败，请重试', 'error');
@@ -76,7 +68,6 @@ const uploadImage = async (file) => {
   }
 };
 
-// 发送保存指令到后端
 const saveImage = async () => {
   try {
     const response = await fetch("http://localhost:5000/save-image", {
