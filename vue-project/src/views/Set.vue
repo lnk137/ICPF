@@ -135,6 +135,7 @@ watch(
   () => {
       console.log("参数发生变化，重新处理图像");
       settingsStore.updateIsSetUpdate(true);
+      settingsStore.sendColorRanges()
   },
   { deep: true }
 );

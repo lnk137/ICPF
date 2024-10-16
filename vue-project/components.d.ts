@@ -12,6 +12,7 @@ declare module 'vue' {
     CardComponent: typeof import('./src/components/CardComponent.vue')['default']
     CardGroup: typeof import('./src/components/三百分比卡片/CardGroup.vue')['default']
     ImageUploader: typeof import('./src/components/ImageUploader.vue')['default']
+    Loader: typeof import('./src/components/Loader.vue')['default']
     Notification: typeof import('./src/components/Notification.vue')['default']
     PercentageGroup: typeof import('./src/components/PercentageGroup.vue')['default']
     RippleButton: typeof import('./src/components/RippleButton.vue')['default']

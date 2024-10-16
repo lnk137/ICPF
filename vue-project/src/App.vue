@@ -16,11 +16,11 @@
         <img src="@/assets/结果查看.svg" alt="导入" class="icon" style="scale: 0.8;"/>
         结果查看
       </router-link>
-      <!-- 导入 -->
-      <router-link to="/test" class="nav-link">
+
+      <!-- <router-link to="/test" class="nav-link">
         <img src="@/assets/训练.svg" alt="导入" class="icon"  />
         模型训练
-      </router-link>
+      </router-link>  -->
 
     </div>
 
@@ -104,6 +104,7 @@
     /* 当内容超出时可以滚动 */
     margin-left: @sidebar_width;
     /* 留出侧边栏的空间 */
+    // scrollbar-width: thin; /* 针对 Firefox 的滚动条样式 */
   }
 }
 .icon {
@@ -111,4 +112,10 @@
   width: 30px; /* 控制图标的宽度 */
   height: 30px; /* 控制图标的高度 */
 }
+
+::-webkit-scrollbar {
+    width: 0px; /*对垂直流动条有效*/
+    height: 6px; /*对水平流动条有效*/
+}
+
 </style>

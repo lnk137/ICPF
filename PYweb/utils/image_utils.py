@@ -3,6 +3,8 @@ import cv2
 from PIL import Image, ImageOps, ImageDraw
 from sklearn.cluster import KMeans
 import config  # 导入config模块
+import pandas as pd
+import io  # 用于操作内存中的文件
 
 
 # 调整图像分辨率
@@ -31,6 +33,7 @@ def black_white_processing(img_pil, resolution):
     upper_range_hsv = config.upper_range_hsv
 
     img_resized = resize_image(img_pil, resolution)
+    config.original_picture = img_resized
     img_cv = np.array(img_resized)
     img_cv = cv2.cvtColor(img_cv, cv2.COLOR_RGB2BGR)
     hsv_img = cv2.cvtColor(img_cv, cv2.COLOR_BGR2HSV)
@@ -47,6 +50,40 @@ def black_white_processing(img_pil, resolution):
     img_pil = Image.fromarray(mask_rgb)
     return img_pil
 
+
+def save_grayscale_image_to_excel(image):
+    """
+    将灰度图像的像素值逐行保存到内存中的 Excel 文件，并将文件保存到 config 中的全局变量中。
+    
+    参数:
+        image (PIL.Image.Image): 灰度图像的 PIL 对象。
+    """
+    # 确保图像为灰度模式
+    if image.mode != 'L':
+        image = image.convert('L')
+    
+    # 将图像转换为 NumPy 数组
+    img_array = np.array(image)
+    rows, cols = img_array.shape
+    
+    # 将每行的像素值保存到列表
+    pixel_data = []
+    for row in range(rows):
+        row_values = img_array[row, :]  # 获取当前行的像素值
+        pixel_data.append(row_values.tolist())  # 将每行像素转换为列表并追加到 pixel_data 中
+
+    # 使用 pandas 将列表保存为内存中的 Excel 文件
+    df = pd.DataFrame(pixel_data)
+
+    # 创建一个内存文件对象，并将其保存到 config 中
+    config.excel_file = io.BytesIO()  # 创建一个内存文件对象
+    with pd.ExcelWriter(config.excel_file, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, header=False)
+    # 重置缓冲区的指针到文件的开头
+    config.excel_file.seek(0)
+    
+    print("灰度图像的像素数据已保存到 config 中的 Excel 文件")
+    
 def calculate_black_area_ratio(img_pil):
     img = np.array(img_pil.convert("L"))
     total_pixels = img.size
@@ -168,13 +205,17 @@ def calculate_parameters(img_pil):
 
 def process_image(img_pil, lower_range, upper_range, resolution):
     img_cv = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
-    img_cv = cv2.GaussianBlur(img_cv, (17, 17), 0)
+    img_cv = cv2.GaussianBlur(img_cv, (3, 3), 0)
     img_pil = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
     if not is_grayscale_image(img_pil):
         print("是原图，进入颜色处理")
         img_pil = black_white_processing(img_pil, resolution)
     else:
         img_pil = resize_image(img_pil, resolution)
+        config.original_picture = img_pil
         print("是黑白图，取消颜色处理")
+    # 保存灰度图像到 Excel
+
     calculate_parameters(img_pil)
+    save_grayscale_image_to_excel(img_pil)
     return img_pil

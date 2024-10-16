@@ -13,17 +13,15 @@ class k_means_img:
     # 调整图像分辨率
     def resize_image(self, img_pil):
         width, height = self.resolution
-        return img_pil.resize((width, height), Image.LANCZOS)  # 使用 LANCZOS 替换 ANTIALIAS
+        return img_pil.resize((width, height), Image.LANCZOS)
 
     # k-means聚类
-    def segment_image(self, image, blur_ksize=(1, 1)):
+    def segment_image(self, image):
         # 转换为numpy数组
         image = np.array(image)
-        # 高斯模糊处理，降噪
-        image_blur = cv2.GaussianBlur(image, blur_ksize, 0)
 
-        # 将模糊后的图像转换为HSV颜色空间
-        image_hsv = cv2.cvtColor(image_blur, cv2.COLOR_RGB2HSV)
+        # 将图像转换为HSV颜色空间
+        image_hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
 
         # 将整个HSV空间的数据转换为二维数组
         hsv_data = image_hsv.reshape(-1, 3)
@@ -41,17 +39,49 @@ class k_means_img:
         # 将聚类中心的HSV值转换回RGB
         cluster_centers_rgb = cv2.cvtColor(cluster_centers.reshape(1, -1, 3).astype(np.uint8), cv2.COLOR_HSV2RGB).reshape(-1, 3)
 
-        # 打印每个聚类中心的颜色的16进制表示
+        # 保存聚类中心颜色到全局配置
+        config.cluster_colors.clear()
+        hex_colors = []
         for i, center in enumerate(cluster_centers_rgb):
             hex_color = "#{:02x}{:02x}{:02x}".format(int(center[0]), int(center[1]), int(center[2]))
-            print(f"聚类 {i} 的颜色: {hex_color}")
+            hex_colors.append(hex_color)
+            config.cluster_colors.append(hex_color)
 
         # 映射分类结果到聚类中心对应的RGB颜色
         segmented_image = np.zeros((image.shape[0], image.shape[1], 3), dtype=np.uint8)
+        labels_reshaped = labels.reshape(image.shape[:2])
         for idx in range(self.k):
-            segmented_image[labels.reshape(image.shape[:2]) == idx] = cluster_centers_rgb[idx]
+            segmented_image[labels_reshaped == idx] = cluster_centers_rgb[idx]
 
-        return Image.fromarray(segmented_image)
+        return Image.fromarray(segmented_image), labels_reshaped
+
+    # 统计每种颜色的面积和比例
+    def calculate_color_stats(self, labels, img_pil, hex_colors):
+        # 获取图像的宽和高
+        width, height = img_pil.size
+        total_pixels = width * height
+        print(f"总像素数: {total_pixels}")
+        # 用于存储新的颜色信息
+        new_color_ifos = []
+        # 遍历每个聚类，计算其面积和比例
+        for idx in range(self.k):
+            color_pixel_count = np.sum(labels == idx)
+            color_ratio = color_pixel_count / total_pixels
+            color_pixel_count/=100
+            color_ratio*=100
+            color_ratio=f"{color_ratio:.2f}"
+            color_ratio=float(color_ratio)
+            color_ifo = {
+                'index': idx,
+                'hex_color': hex_colors[idx],
+                'area': color_pixel_count,
+                'ratio': color_ratio
+            }
+            print(color_ifo)
+            # 将新的颜色信息添加到列表中
+            new_color_ifos.append(color_ifo)
+            # 直接替换 config.color_ifos 的内容
+        config.color_ifos = new_color_ifos
 
     # 黑白颜色处理函数
     def black_white_processing(self, img_pil, lower_range_hsv, upper_range_hsv):
@@ -76,16 +106,28 @@ class k_means_img:
 
         # 将 NumPy 数组转换为 PIL 图像，最终不包含透明度
         stain_img = Image.fromarray(white_background_img)
-        stain_img=self.apply_gaussian_blur(stain_img)
-        # 调用segment_image生成分割结果
-        segmented_image = self.segment_image(stain_img)
 
-        return segmented_image
+        # 生成不带高斯模糊的K-means图像
+        print("开始生成不带高斯模糊的K-means聚类图像")
+        non_blurred_segmented_image, labels = self.segment_image(stain_img)
+        # 调用统计函数
+        self.calculate_color_stats(labels, non_blurred_segmented_image, config.cluster_colors)
+        config.no_gb_picture = non_blurred_segmented_image
+        # non_blurred_segmented_image.save("无模糊聚类图.png")
+        # print("已保存不带高斯模糊的K-means聚类图像")
+
+        # 调用高斯模糊处理函数
+        stain_img = self.apply_gaussian_blur(stain_img)
+
+        # 调用segment_image生成分割结果
+        segmented_image, _ = self.segment_image(stain_img)
+        config.gb_picture = segmented_image
+        return segmented_image,non_blurred_segmented_image
 
     # 图像处理主函数
     def process_image(self, img_pil, lower_range_hsv, upper_range_hsv):
-        processed_img = self.black_white_processing(img_pil, lower_range_hsv, upper_range_hsv)
-        return processed_img
+        GB_Img,NO_GB_Img = self.black_white_processing(img_pil, lower_range_hsv, upper_range_hsv)
+        return GB_Img,NO_GB_Img
     
     # 高斯模糊函数
     def apply_gaussian_blur(self, img_pil, ksize=(15, 15)):
@@ -97,22 +139,3 @@ class k_means_img:
         blurred_img_pil = Image.fromarray(blurred_img_cv)
         return blurred_img_pil
 
-# 示例如何使用工具类
-if __name__ == "__main__":
-    # 示例输入参数，用户需根据实际输入来调整
-    img_path = "1.png"  # 替换为实际的图像路径
-    lower_range_hsv = config.lower_range_hsv
-    upper_range_hsv = config.upper_range_hsv
-    resolution = config.resolution
-
-    # 打开输入图像
-    img = Image.open(img_path)
-
-    # 实例化工具类
-    img_processor = k_means_img(resolution=resolution)
-
-    # 调用 process_image 处理图像
-    processed_image = img_processor.process_image(img, lower_range_hsv, upper_range_hsv)
-    
-    # 保存处理后的图像
-    processed_image.save("processed_image.png")

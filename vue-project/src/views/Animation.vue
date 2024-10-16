@@ -6,7 +6,7 @@
           <!-- 使用 Atom 组件作为 Logo -->
           <Atom class="logo" />
           <h1 class="software-name">ICPWF</h1>
-          <p class="version">V1.0.beta</p>
+          <p class="version">V1.1.0-beta</p>
           <div class="progress-bar">
             <div class="progress"></div>
           </div>

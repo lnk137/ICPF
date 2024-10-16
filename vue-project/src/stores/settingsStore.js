@@ -55,7 +55,7 @@ export const useSettingsStore = defineStore('settingsStore', () => {
       }
 
       const result = await response.json();
-      console.log("Data sent successfully:", result);
+      console.log("参数发送成功:", result);
     } catch (error) {
       console.error("An error occurred:", error);
     }

@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.mirrors.ustc.edu.cn/simple"
+verify_ssl = true
+name = "pip_conf_index_global"
+
+[packages]
+flask = "==2.3.2"
+pillow = "==9.2.0"
+pywebview = "==3.5"
+numpy = "==1.23.1"
+opencv-python = "==4.6.0.66"
+flask-cors = "==3.0.10"
+requests = "==2.31.0"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
